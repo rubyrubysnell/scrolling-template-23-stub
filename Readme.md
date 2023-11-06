@@ -1,6 +1,6 @@
 # Adding Animations with Intersectional Observer
 
-## The Intersectional Observer
+## The Intersection Observer
 
 The intersectional observer is a javascript object that can detect when an item has come in contact with the viewport. We can use it to trigger animations as we scroll through a page.
 
@@ -298,54 +298,104 @@ event.target.parentNode.classList.add("right-to-left");
 This bit of code will do the following:
 
 - Wait for the button to be clicked
-- When the button is clicked, add the 'right-to-left' class to it's parent element, which is the `container` `div`.
+- When the button is clicked, add the `'right-to-left'` class to it's parent element, which is the `container` `div`.
 - Since this class has only just now been added to the html element, the `css` animation only gets triggered now.
+- Once the animation has finished, the `html` element remains stable with whatever the styling it previously had.
 
 ### Retriggering
 
-The problem though is that the animation is only triggered once. Can you think of a way to "retrigger" the animation every time the button gets clicked?
+The problem though is that the animation is only triggered once. Can you think of a way to restart the animation after the button is clicked?
 
-**First Hint:** The method remove('class-name') might be useful. You can read about it in [this W3School article](https://www.w3schools.com/howto/howto_js_remove_class.asp).
+This is a tricky problem... for now, we're going to reset the state of the animation with the help of another button. 
 
-**Second Hint:** You will need to use a second button.
-
-**Third Hint:** You can remove classes using the function `remove('class-name')`
+Try to do it yourself! The task is to:
+- Add another button saying `"Reset Animation"`.
+- Create an object in the `animation-manager.js` file that points to this button.
+- Add code to be triggered with the `onclick` event.
+- Think of a way to modify the style of the `div` element to trick it into thinkint that the animation has not yet happened.
 
 <details>
-<summary>Solution</summary>
-You can add a secondary button to reset the animation. You will have to add this button first in the html, and then add code in the `javascript` to remove the class list when that button is clicked.
+<summary>Hint</summary>
+
+A helpful method to restart the state of the animation is by using the `remove('class-name')` function, which allows us to remove a class name from an element. You can read about it in [this W3School article](https://www.w3schools.com/howto/howto_js_remove_class.asp).
 </details>
 
 <details>
-<summary>Solution - Html</summary>
-You can add a button reset in your html by adding this on the following line of the animation trigger button:
+<summary>Solution - Reasoning</summary>
+
+Before looking at the code, let's think about this idea of resetting the animation. The animation gets triggered when the class `right-to-left` is added to the `html` `div` element. This means that if we remove this class and then add it again, the animation should be reset. From this reasoning, we can think of adding a button that will "restart the animation" by removing the class `right-to-left`, so that when the `animator` button is clicked again, the `html` thinks that the class is added to the list for the first time. It may sound like a few extra steps, but it's the easiest way to do it when we're using buttons as triggers!
+</details>
+
+<details>
+<summary>Solution - Step One</summary>
+
+The first step is to add a button to the `html`. Remember to give it an id so that we can later on call it from the `javascript` file.
+
 
 ```html
 <button id="animation-reset">Reset Animation</button>
 ```
 
+You can add a secondary button to reset the animation. You will have to add this button first in the html, and then add code in the `javascript` to remove the class list when that button is clicked.
 </details>
 
 <details>
-<summary>Solution - Javascript</summary>
-You can add a button selection and a reset onclick trigger like so:
+<summary>Solution - Step Two</summary>
+
+After that, we need to create an object in the `javascript` that points to this button. You can do this with the `document.getElementById('id')` method:
+
 
 ```javascript
 const resetAnimationButton = document.getElementById("animation-reset");
+```
+</details>
+
+
+<details>
+<summary>Solution - Step Three</summary>
+
+Finally, below this new code, add a new line of code to define what happens when the `onclick` event is triggered. 
+
+```javascript
 resetAnimationButton.onclick = (event) => {
   event.target.parentNode.classList.remove("green-to-blue");
 };
 ```
-
 </details>
 
 #### Challenge!
 
 Would you be able to add some code to mark when the button is enabled and disabled? The styling for css has already been set up to mark when a button is enabled or not, so all you'd have to do is manage the 'disabled' property between `html` and `javascript`.
 
+<details>
+<summary>Challenge Solution</summary>
+
+You can do so by:
+- Marking the reset animation button in the `html` as disabled to begin with:
+```html
+<button id="animation-reset" disabled>Reset Animation</button>
+```
+
+- Inside the `animationTriggerButton` `onclick` event handler, add a new line disabling the `animationTriggerButton` and enabling the `resetAnimationButton` like so:
+
+```javascript
+animationTriggerButton.disabled = true;
+resetAnimationButton.disabled = false;
+```
+
+
+- Inside the `resetAnimationButton` `onclick` event handler, add a new line enabling the `animationTriggerButton` and disabling the `resetAnimationButton` like so:
+
+```javascript
+animationTriggerButton.disabled = false;
+resetanimationButotn.disabled = true;
+```
+
+</details>
+
 ## Triggering class change upon viewport intersection
 
-Now that we've seen it's possible to trigger and retrigger animations through class changing, let's add functionality to the code to do so upon viewport intersection, i.e., when an element comes into view.
+Now that we've seen that it's possible to trigger and retrigger animations through class changing, let's add functionality to the code to do so upon viewport intersection, i.e., when an element comes into view.
 
 For this we will use the [Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) object. Let's' start with some theroy to understand how this object works.
 
@@ -361,7 +411,7 @@ Let's open the `animation-manager.js` and start coding!
 
 #### Target Options
 
-In order to define the `observer` object we need to have some options predefined as well, to let the Intersection Observer API know what counts as an interaction. We will use the following object to define the `options`.
+In order to define the `observer` object we need to have some options predefined as well, to let the Intersection Observer know what counts as an interaction. We will use the following object to define the `options`.
 
 ```javascript
 const options = {
@@ -394,11 +444,11 @@ With the `options` and the `callback` set up, we can now create the observer obj
 const observer = new IntersectionObserver(callback, options);
 ```
 
-As you can see, were not letting `javascript` know that this observer object should be link to the viewport. This is because we don't need to! The default Observer is the viewport. We could choose a different observer if we wanted to... for example, a floating square in the screen, by changing the options. Luckily, we do not need to do so in our case.
+As you can see, we are not letting `javascript` know that this observer object should be link to the viewport. This is because we don't need to! The default Observer is the viewport. We could choose a different observer if we wanted to... for example, a floating square in the screen, by changing the options. Luckily, we do not need to do so in our case.
 
 #### The Targets
 
-We need now to select which targets are going to be relevant to the observer. For this, we can use yet a new class, which we're gonna call `animate-on-view`. Head to the `index.html` file and add this class to the second and fifth `div`s, the one that reads `"Scarlet Johanson was walking round town..."` and the one that reads`"But AH WELL in the end all was good ..."`.
+We need now to select which targets are going to be relevant to the observer. For this, we can use yet a new class, which we're gonna call `animate-on-view`. Head to the `index.html` file and add this class to the third and fifth `container` elements of the page.
 
 Having done so, in the javascript, you can select all elements with class `animate-on-view` like so:
 
@@ -436,7 +486,7 @@ for (const target of targets) {
 }
 ```
 
-If you check the console, you will see that the message `'an intersection has been detected'` os logged every time each of these `div` either ENTERS or LEAVES the viewport.
+If you check the console, you will see that the message `'an intersection has been detected'` is logged every time each of the `div` elements which has the class `animate-on-view` either ENTERS or LEAVES the viewport.
 
 ## Changing Classes in the Callback
 
@@ -471,90 +521,124 @@ We can do so by modifying the callback code once again like so:
 const callback = (callbackTargets) => {
   for (const callbackTarget of callbackTargets) {
     if (callbackTarget.isIntersecting)
-      callbackTarget.target.classList.add("blue-to-green");
-    else callbackTarget.target.classList.remove("green-to-blue");
+      callbackTarget.target.classList.add("right-to-left");
+    else callbackTarget.target.classList.remove("right-to-left");
   }
 };
 ```
 
-In this case, each `callbackTarget` element is the target that the callback uses to store additional information. This element has a `callbackTarget.target` property which is used to directly reference the `html` object and thus be able to interact with it's classes.
+In this case, each `callbackTarget` element is the target that the callback uses to store additional information. This element has a `callbackTarget.target` property which is used to directly reference the `html` object and thus be able to interact with it's classes. We are **adding** the class `right-to-left` every time one of this objects comes in view. We are removing the class `right-to-left` each time one of these objects leaves the view, which sets the object up so that the animation will be triggered again next time this class is added, i.e., next time this object comes into view again.
 
 ## Generalizing The Code
 
-Imagine now that you have different types of animations that you want to trigger as the elements come in view, not just the `green-to-blue`. It is good practice to not use specific classes, but to use classes that are as abstract as possible. If we had a different animation for each of our `div` elements, as we will do later on, you would have to add a conditional check (an `if`) to see which specific class triggers the animation we want according to the current `target` and then do the appropriate change of class. This is a lot of extra work for the code! With a few modifications we can manage this differently.
+Imagine now that you have different types of animations that you want to trigger as the elements come in view, not just the `right-to-left`. Following the example we have seen so far, let's say that we want to trigger `right-to-left` for the third container and `left-to-right` for the fifth container. It would be very difficult to do it with the code we have, as the `callbackTarget` object contains a reference to the `html element` but no way to direclty link it to it's position on the page. 
 
-We're gonna use a new class called `intersecting`. Let's first head to all the divs that we have been currently been working with, i.e., the second, third and fifth, and make sure they all have a `green-to-blue` and `animate-on-view` tag. These divs classes in our `html` should look like this:
+In order to achieve this goal, we need to refresh a specific `css` concept:
 
-```javascript
-"container green-to-blue animate-on-view";
-```
+Read through the [W3 School `css selector` page](https://www.w3schools.com/cssref/css_selectors.php) to learn about the `.class1.class2` selector options. This is used to narrowly select elements that have more than one class.
 
-Now in the `callback` function in our `javascript`, let's modify it to look like this:
-
-```javascript
-const callback = (callbackTargets) => {
-  for (const callbackTarget of callbackTargets) {
-    if (callbackTarget.isIntersecting)
-      callbackTarget.target.classList.add("intersecting");
-    else callbackTarget.target.classList.remove("intersecting");
-  }
-};
-```
-
-This way, there is no specific reference in the `javascript` to which specific animation we are talking about. However, now the website doesn't work! Because the `css` also needs some modifications. We need to let `css` know that the `animation` code related to the `blue-to-green` element needs to be applied to all those elements that are `intersecting`. To do so, we can modify that bit of `css` like so:
+For example, we could select all `div` elements with class `container` and `blue` at the same time with the code: 
 
 ```css
-.green-to-blue.intersecting {
-  animation: greentobluebackground;
-  animation-duration: 5s;
-  animation-fill-mode: forwards;
+.container.blue {
+  /* Apply a specific css to all containers that are blue... we may use this if there is a specific property that only tose containers that are blue will have */
 }
 ```
 
-By using the selector `green-to-blue.intersecting` we are letting `css` know that this code applies to all elements that have BOTH classes `green-to-blue` AND `intersecting`. The `intersecting` class is only added when an element enters into view, and removed when an element leaves the view, which means that this `css` code is only applied when the element is in view.
+ We will use this to trigger different intersections by the use of two classes:
+- `class1` for us will be the name of whichever animation this refers to. This could be `right-to-left` or `left-to-right`.
+- `class2` for us will be a new class that we will call `in-view` that will only be present when the `html` element is in view. We will manage adding and removing this class from the **Intersection Observer**.
+
+Let's think about how this whole process will work:
+
+- Each `div` which has an `animate-on-view` element will contain a `right-to-left` or `left-to-right` animation property
+- The javascript `callback observer` will add and remove the class `intersecting` instead of each specific animation, like so:
+  ```javascript
+  const callback = (callbackTargets) => {
+    for (const callbackTarget of callbackTargets) {
+      if (callbackTarget.isIntersecting)
+        callbackTarget.target.classList.add("intersecting");
+      else callbackTarget.target.classList.remove("intersecting");
+    }
+  };
+  ```
+- The `css` file will be modified to add the new selectors:
+  The code:
+
+  ```css
+  .right-to-left {
+    animation: righttoleft;
+    animation-duration: 5s;
+  }
+  ```
+  Becomes:
+  ```css
+  .right-to-left.intersecting {
+    animation: righttoleft;
+    animation-duration: 5s;
+  }
+  ```
+
+  And the code:
+
+  ```css
+  .left-to-right {
+    animation: lefttoright;
+    animation-duration: 5s;
+  }
+  ```
+  Becomes:
+  ```css
+  .left-to-right.lefttoright {
+    animation: righttoleft;
+    animation-duration: 5s;
+  }
+  ```
+
+  So that the animation is only triggered when the `.intersecting` class is present. 
+
+By using the selectors `.right-to-left.intersecting` and `left-to-right.intersecting` we are letting `css` know that this code applies to all elements that have BOTH classes `right-to-left` / `left-to-right` AND `intersecting`. The `intersecting` class is only added when an element enters into view, and removed when an element leaves the view, which means that this `css` code is only applied when the element is in view.
 
 ## Let's Add More Animations
 
-We have thus far looked at animations used to change the color of the background. We can also play with animations that move elements around! To do so, we'll have to create a new keyframe. I have prepared a few keyframes for you to use, but you can change them however you want!
-
-Here are some example keyframes for you to look at:
+Can you now think of how you'd add another animation where the element is coming from the bottom? How would you set it up in a way that it is triggered for one of the `div` elements upon entering the viewport?
 
 <details>
-<summary>Entrance From Left</summary>
+<summary>Solution</summary>
 
-Keyframe to define an entry from the left. The element starts at `-100 pixels` in the horizontal axis from it's original position and moves into view.
-
-```css
-@keyframes lefttoright {
-  0% {
-    transform: translateX(-100px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-```
-</details>
-
-<details>
-<summary>Entrance From Bottom</summary>
-Keyframe to define an entry from the bottom. The element starts at `-100 pixels`in the vertical axis from it's original position and moves into view.
+You can add the following `keyframe` in the `css`:
 
 ```css
 @keyframes bottomtotop {
-  0% {
+  from {
     transform: translateY(100px);
     opacity: 0;
   }
-  100% {
+  to {
     transform: translateY(0);
     opacity: 1;
   }
 }
 ```
+
+And then the following selector to trigger it:
+
+```css
+.bottom-to-top.intersectiong {
+  animation: bottomtotop;
+  animation-duration: 5s;
+}
+```
+
+And, finally, add the classes `bottom-to-top` and `animate-on-view` to any `div container` in which you want to trigger this animation upon entering the viewport.
 </details>
+
+Thus far we have defined animations with the `keyframe` option and the kewords `from` and `to` to define from which style to which style these are moving the element... We can have much more sophisticated animations! We can move anything around as much as we want by using the `%` option in the `keyframe` animations. Keyframes can either be defined with:
+- `from` and `to` tags, to define only the starting and ending point
+- percentage tags, such as `0%`, `15%`, `50%`, `100%`, of which we can have as many as we want, to change the style of the element precisely!
+
+Look at the **Bottom Zig Zag** example code and create your own `keyframe` fancy code. You can trigger this animation using either the `animate-on-view` class system or a button!
+
 <details>
 <summary>Bottom Zig Zag</summary>
 The Element enters in view from the bottom and zig zagging from left to write. As you can see I have divided the translations into a few steps.
@@ -600,28 +684,5 @@ The Element enters in view from the bottom and zig zagging from left to write. A
 ```
 </details>
 
-Can you edit the `html`, `css`, and `javascript` to use each of these keyframes?
 
 <details>
-<summary>Solution</summary>
-
-For each of them you'll have to do the following steps. Let's take `lefttoright` as an example:
-
-- Choose a name for its corresponding class. A good idea is to use `left-to-right`, i.e., transform the `keyframe` name into `kebab case`.
-- In your `html`, add this class to all the `div` elements that you want to animate in that way by adding the name class at the end.
-- Add the class `animate-on-view` to all the `div` elements that you want to animate in that way, so that the `javascript` knows to target them with the `observer`.
-- Using the `css` selector `.left-to-right.intersecting`, include the animation code like we did for the `green-to-blue`, but changing the `animation` to the corresponding keyframe, in this case `lefttoright`.
-
-You're done! When you scroll an element in view, you should now see the new animation.
-
-</details>
-
-### Controlling Opacity
-
-The only left issue is that for a second we can view the element in our viewport! We can change this by making it invisible by default. As you can see in my new keyframes I have an `opacity` setting which starts at zero. We can also add opacity zero to the original element by adding the followign `css`:
-
-```css
-.left-to-right {
-  opacity: 0;
-}
-```
