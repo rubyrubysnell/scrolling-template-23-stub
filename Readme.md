@@ -124,17 +124,17 @@ See what happens if you remove or change any of the classes. For example, try ch
 
 ### Html Changes
 
-We will now create our first animation. We will make an animation that changes the color of the first `div`'s background from green to blue from the `css`.
+We will now create our first animation. We will make an animation that makes the first `div` enter the screen from the left.
 
 To start, in the first html `div`:
 
-- Replace the class `green` with the class `green-to-blue`
+- Add a new class that we'll call `left-to-right`
 
 <details>
     <summary>Html Solution</summary>
     Your first div of the index.html file should look like this:
 
-    <div class="container green-to-blue">
+    <div class="container green left-to-right">
       <h1>Once upon a time...</h1>
       <button id="start-audio">Want Some Music?</button>
     </div>
@@ -152,12 +152,12 @@ To define the animation we are going to use a specific `css` rule called `keyfra
 An example fo a `@keyframe` is:
 
 ```css
-@keyframes greentobluebackground {
+@keyframes lefttoright {
   from {
-    background-color: #dcedfc;
+    transform: translateX(-100px);
   }
   to {
-    background-color: #d4ffd5;
+    transform: translateX(0);
   }
 }
 ```
@@ -166,12 +166,12 @@ So, to continue:
 
 - Add the code for this example `keyframe` at the top of the `animations.css` file.
 
-This is telling `css` that we have now created a transitioning animation, but we have not yet linked the `keyframe` called `greentobluebackground` to any classes.
+This is telling `css` that we have now created a transitioning animation, but we have not yet linked the `keyframe` called `lefttoright` to any classes.
 
-To link it to the elements with class `green-to-blue`:
+To link it to the elements with class `left-to-right`:
 
-- Create a css selector using the `.green-to-blue` keyword
-- Add the css property `animation: greentobluebackground;` to style the selected elements
+- Create a css selector using the `.left-to-right` keyword
+- Add the css property `animation: lefttoright;` to style the selected elements
 - Add the css property `animation-duration: 5s;` to let css know we want a `5s` animation - otherwise it happens so quickly we don't even see it!
 
 <details>
@@ -179,17 +179,17 @@ To link it to the elements with class `green-to-blue`:
 In the end, your `css` file should look like this:
 
 ```css
-@keyframes greentobluebackground {
+@keyframes lefttoright {
   from {
-    background-color: #dcedfc;
+    transform: translateX(-100px);
   }
   to {
-    background-color: #d4ffd5;
+    transform: translateX(0);
   }
 }
 
-.green-to-blue {
-  animation: greentobluebackground;
+.left-to-right {
+  animation: lefttoright;
   animation-duration: 5s;
 }
 ```
@@ -198,25 +198,58 @@ In the end, your `css` file should look like this:
 
 With this new code in place, check your live page!
 
-### Polishing
-
-Let's do some polishing. As the animation is working now, the step by step `css` changes are:
-
-- The div initially has transparent background color
-- The animation is triggered to change the background from green to blue
-- The style changes back to the original transparent style
-
-Let's do it so the style at the end of the animation is the same as the last animation frame. To do so, we can add the css property `animation-fill-mode: forwards;`.
-
 ### Animating other divs
 
-Select a few random divs from the `html` and replace the color related class with the `green-to-blue` class. Let's see how the page evolves!
+Let's try now and add a second animation, that we're gonna call `right-to-left`. 
 
-....
+Would you be able to know how to do so? Could you link the second `div` with this `keyframe`?
 
-Unfortuantely, after looking at the live page, we cannot see the animations. This is because the animations are happening all at once, just after the page is loaded, before the divs are inside the viewport. We need to find a way to only trigger the animation code when an element is in viewport.
+<details>
+<summary>Solution - Step One</summary>
 
-To keep the code clean, remove the class `green-to-blue` from all `div`s except the first one.
+First let's add a new class to the second `div` that we can call `right-to-left`.
+
+</details>
+
+<details>
+<summary>Solution - Step Two</summary>
+
+To add a `right-to-left` animation, we need to create a `keyframe` in the `css`. We can do so like this:
+
+```css
+@keyframes righttoleft {
+  from {
+    transform: translateX(+100px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Solution - Step Three</summary>
+
+Once the `keyframe` is created, we need to add a link with the html elements with class `right-to-left`. We can do so like this:
+
+```css
+.right-to-left {
+  animation: righttoleft;
+  animation-duration: 5s;
+}
+```
+
+</details>
+
+Is this solution working for you? Can you think of why the animation might not be displaying?
+
+<details>
+<summary>Solution</summary>
+
+Unfortuantely, after looking at the live page, we cannot see the animation coming up for the second div. This is because the animation is happening as soon as the page loads, before the div is inside the viewport. We need to find alternative ways of triggering this animation...
+</details>
 
 ## Changing classes on javascript
 
@@ -226,14 +259,14 @@ We can use `javascript` to change the style of our `html` live by changing the c
 
 To begin:
 
-- Add a button inside the third container div, the one that reads "But then Voldemort came and he tried to kill her..."
-- Give the id `animator` to this button
-- Create a constant variable in the `animation-manajger.js` pointint to that button called `animationTriggerButton`
-- Add an event listener for the `onclick` event linked to a function that simply logs in the console 'The animation was triggered'
+- Add a button inside the second container div, the one in which we have just added the `right-to-left` animation.
+- Give the id `animator` to this button.
+- In the `animation-manager.js`, create a constant variable, name it `animationTriggerButton` pointing to that button.
+- Add an event listener for the `onclick` event linked to a function that simply logs in the console `"The animation was triggered"`
 
 <details>
 <summary> Solution - HTML</summary>
-In your html you should have added a line inside one of the div containers like so:
+In your html you should have added a line inside the second div containers like so:
 
 ```html
 <button id="animator">Animate Me</button>
@@ -243,7 +276,7 @@ In your html you should have added a line inside one of the div containers like 
 
 <details>
 <summary> Solution - Javascript</summary>
-Your animation-manager.js file should look similar to this:
+Your `animation-manager.js` file should look similar to this:
 
 **Note**: There are different ways to define an event function so the second line may look different for you. As long as you can see the log in the console when you click the button, you know that it is working.
 
@@ -259,14 +292,14 @@ animationTriggerButton.onclick = (event) => {
 With this log working, let's now add the code that will change the class when the button is clicked. To do so, add this code inside the `onclick` event function, instead of the `console.log`:
 
 ```javascript
-event.target.parentNode.classList.add("green-to-blue");
+event.target.parentNode.classList.add("right-to-left");
 ```
 
 This bit of code will do the following:
 
 - Wait for the button to be clicked
-- When the button is clicked, add the 'green-to-blue' class to the background
-- Since this class has only just now been added to the html element, the `css` animation only gets triggered now
+- When the button is clicked, add the 'right-to-left' class to it's parent element, which is the `container` `div`.
+- Since this class has only just now been added to the html element, the `css` animation only gets triggered now.
 
 ### Retriggering
 
