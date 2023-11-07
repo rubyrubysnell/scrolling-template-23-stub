@@ -35,6 +35,7 @@
 @keyframes bottomzigzag {
     0% {
         transform: translateX(-300px) translateY(250px);
+        opacity: 0;
     }
     20% {
         transform: translateX(280px) translateY(225px);
@@ -50,10 +51,17 @@
     }
     100% {
         transform: translateX(0px) translateY(0px);
+        opacity: 1;
     }
 }
 
 .bottom-zig-zag {
     animation: bottomzigzag;
     animation-duration: 3s;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+}
+
+.observable {
+    opacity: 0;
 }
