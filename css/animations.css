@@ -1,0 +1,59 @@
+@keyframes lefttoright {
+    from {
+        transform: translateX(-100px);
+        background-color: blue;
+    }
+
+    to {
+        transform: translateX(0px);
+        background-color: red;
+    }
+}
+
+.left-to-right {
+    animation: lefttoright;
+    animation-duration: 5s;
+}
+
+@keyframes righttoleft {
+    from {
+        transform: translateX(100px);
+        background-color:lavender;
+    }
+
+    to {
+        transform: translateX(0px);
+        background-color:rosybrown;
+    }
+}
+
+.right-to-left {
+    animation: righttoleft;
+    animation-duration: 5s;
+}
+
+@keyframes bottomzigzag {
+    0% {
+        transform: translateX(-300px) translateY(250px);
+    }
+    20% {
+        transform: translateX(280px) translateY(225px);
+    }
+    40% {
+        transform: translateX(-260px) translateY(200px);
+    }
+    60% {
+        transform: translateX(240px) translateY(175px);
+    }
+    80% {
+        transform: translateX(-220px) translateY(150px);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px);
+    }
+}
+
+.bottom-zig-zag {
+    animation: bottomzigzag;
+    animation-duration: 3s;
+}
