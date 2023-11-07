@@ -17,21 +17,25 @@
     <!-- ================================= TITLE ================================= -->
 
     <!-- Title container has an h1 and a button to play some music -->
-    <div class="container green left-to-right">
+
+    <!-- any div with an animation-related class, and the "observable" class, will be triggered by the observer in javascript -->
+    <div class="container green left-to-right observable">
       <h1>Once upon a time...</h1>
       <button id="start-audio">Want Some Music?</button>
     </div>
 
     <!-- ================================= STORY ================================= -->
       <!-- Story containers all have an image with a caption -->
-      <div class="container blue">
+      <div class="container blue right-to-left observable">
       <img src="pictures/under-skin.webp" />
-      <button id="animator">Animate Me!</button>
-      <button id="de-animator" disabled>Reset Me!</button>
+      <!-- animation button -->
+      <button id="animator" disabled>Animate Me!</button>
+      <!-- reset button -->
+      <button id="de-animator">Reset Me!</button>
       <p>Scarlet Johanson was walking round town killing some bad guys</p>
     </div>
 
-    <div class="container green observable">
+    <div class="container green bottom-zig-zag observable">
       <img src="./pictures/hp.avif" />
       <p>
         But then Voldemort came and he tried to kill her but she was like nuh ha
